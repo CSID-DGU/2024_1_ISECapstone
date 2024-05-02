@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import os
+
+print(os.getcwd)
 
 class Graph:
     def __init__(self, distance_matrix):
