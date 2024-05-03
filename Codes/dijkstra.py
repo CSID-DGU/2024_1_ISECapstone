@@ -54,7 +54,7 @@ column_name_S = df_DBN.columns.map(str)
 #출구와 출구가 아닌 노드의 index 분리
 exits = [node for node in column_name_S if node.startswith('출구')]
 exits_index = [df_DBN.columns.get_loc(col) for col in exits]
-non_exit_indices = [i for i in range(381) if i not in exits_index]
+non_exit_indices = [i for i in range(380) if i not in exits_index]
 
 #경로를 저장할 위치
 shortest_paths = {}
