@@ -44,16 +44,36 @@ def organize_data_with_code(df):
             time_table[classroom_code].append(slot + [row['인원수']])
     return time_table
 
-# 데이터 통합
-lecture_info = organize_data_with_code(lecture_data)
-people_info = organize_data_with_code(people_data)
+# # 데이터 통합
+# lecture_info = organize_data_with_code(lecture_data)
+# people_info = organize_data_with_code(people_data)
 
-# # 최종 데이터 구조 생성
-# for code in lecture_info:
-#     if code in people_info:
-#         for slot in lecture_info[code]['time_slots']:
-#             slot.append(people_info[code])  # 인원수 추가
+# total_info = {}
+# total_info.update(lecture_info)
+# total_info.update(people_info)
 
-people_info.update(lecture_info)
-print(people_info.keys())
-print(len(people_info.keys()))
+# print(total_info)
+
+# # 데이터프레임 변환 함수
+# def dict_to_dataframe(info_dict):
+#     rows = []
+#     for classroom_code, time_slots in info_dict.items():
+#         for slot in time_slots:
+#             day, start_time, duration, people_count = slot
+#             rows.append({
+#                 'Classroom Code': classroom_code,
+#                 'Day Number': day,
+#                 'Start Time': start_time,
+#                 'Duration': duration,
+#                 'People Count': people_count
+#             })
+    
+#     return pd.DataFrame(rows)
+
+# # total_info를 데이터프레임으로 변환
+# df_total_info = dict_to_dataframe(total_info)
+
+# # CSV 파일로 저장
+# df_total_info.to_csv('TotalInfo.csv', index=False)
+
+# print('Data saved to CSV file.')
