@@ -16,15 +16,11 @@ def transform_value(x):
         return 1
     else:
         return x
-    
+
 def calculate_max_intervals(dfs, interval=4):
     interval_results = {}
-    header_row = None  # 맨 위에 추가할 헤더 행을 저장할 변수
     
     for key, df in dfs.items():
-        if header_row is None:
-            header_row = df.iloc[0, :]  # 첫 번째 DataFrame의 첫 행을 헤더로 사용
-            
         for start in range(1, len(df), interval):
             if start < 80:
                 end = min(start + interval, len(df) + 1)
@@ -33,7 +29,7 @@ def calculate_max_intervals(dfs, interval=4):
                 end = len(df) + 1
                 interval_label = f"{start}초~"
 
-            max_values = df.iloc[start:end, 1:].max(axis=0)
+            max_values = df.iloc[start:end, :].max(axis=0)  # 첫 번째 열(t)를 포함하여 계산
             if interval_label not in interval_results:
                 interval_results[interval_label] = []
             interval_results[interval_label].append(max_values)
@@ -41,23 +37,22 @@ def calculate_max_intervals(dfs, interval=4):
                 break
 
     # 각 구간별로 평균을 계산하여 새로운 DataFrame으로 저장
-    result_dict = {'t': []}
-    for col in df.columns[1:]:
-        result_dict[col] = []
+    result_dict = {col: [] for col in df.columns}  # 첫 번째 열(t)를 포함한 열로 dict 초기화
 
     for interval_label, max_values_list in interval_results.items():
         df_max_values = pd.DataFrame(max_values_list)
-        result_dict['t'].append(interval_label)
-        for col in df.columns[1:]:
+        for col in df.columns:  # 첫 번째 열(t)를 포함한 열에 대해 평균 계산
             result_dict[col].append(df_max_values[col].mean())
 
     result_df = pd.DataFrame(result_dict)
-    
-    # 헤더 행을 추가하여 새로운 DataFrame 생성
-    header_df = pd.DataFrame([header_row], columns=header_row.index)
-    final_df = pd.concat([header_df, result_df], ignore_index=True)
-    
-    return final_df
+
+    # 원래 df의 첫 번째 행 추가 (첫 번째 열(t) 포함)
+    first_row = list(dfs.values())[0].iloc[0, :]
+    result_df.loc[-1] = first_row
+    result_df.index = result_df.index + 1
+    result_df = result_df.sort_index()
+
+    return result_df
 
 for filename in os.listdir(directory):
     if filename.endswith('.csv'):
@@ -144,13 +139,15 @@ for k in range(0, 90):
 # print(people_count_dic[0])
     
 results_df = calculate_max_intervals(people_count_dic)
-# print(results_df)
+print(results_df)
 
-# output_file = 'output.xlsx'
-# results_df.to_excel(output_file)
+output_file = 'output.xlsx'
+results_df.to_excel(output_file)
 
-for m in range(0, 21):
-    print(results_df.iloc[:, 0])
+# for m in range(0, 21):
+#     print(results_df.iloc[:, 0])
 
 # average_time = np.mean(time_list)
 # print(results)
+    
+#일단 101이 비어있는 이유가 101부분이 index라고 취급되어서인거같은데 어떻게 처리해야할지는...

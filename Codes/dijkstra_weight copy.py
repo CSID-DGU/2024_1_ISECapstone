@@ -53,10 +53,8 @@ class Graph:
     
     def print_path(self, prev, j):
         if prev[j] is None:
-            print(self.nodes[j], end=' ')
-            return
-        self.print_path(prev, prev[j])
-        print(self.nodes[j], end=' ')
+            return [self.nodes[j]]  # 수정: 리스트 반환으로 변경
+        return self.print_path(prev, prev[j]) + [self.nodes[j]]  # 수정: 리스트 합치기로 변경
 
 # 파일 경로
 file_path = './ExcelFiles/DistanceBtwnNodes.xlsx'
@@ -84,9 +82,10 @@ for index_node in non_exit_indices:
     node_name = df_DBN.index[index_node]
     print(f"Shortest path from {node_name} to {df_DBN.columns[closer_exit[1]]} is {closer_exit[0]} units.", end="")
     print(" path : ", end="")
-    graph_DBN.print_path(predecessors, closer_exit[1])
-    print("\n")
+    path = graph_DBN.print_path(predecessors, closer_exit[1])  # 수정: 경로 반환 받기
+    print(path)  # 수정: 경로 출력
+    shortest_paths[node_name] = path  # 수정: shortest_paths에 추가
     
 # DataFrame으로 변환하고 CSV로 저장
-df_paths = pd.DataFrame(list(shortest_paths.items()), columns=['Node', 'Path'])
+df_paths = pd.DataFrame(shortest_paths.items(), columns=['Node', 'Path'])  # 수정: DataFrame 생성
 df_paths.to_csv('shortest_paths_dijkstra_weight.csv', index=False, encoding='utf-8-sig')
