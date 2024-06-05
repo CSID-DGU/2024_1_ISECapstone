@@ -64,12 +64,17 @@ shortest_paths = {}
 
 # Compute the shortest paths to each exit for each node excluding the exits themselves
 for index_node in non_exit_indices: 
+    path = []
     node_name = df_DBN.index[index_node]
     distances, predecessors = graph_DBN.dijkstra(index_node)
     closer_exit = min((distances[exit], exit) for exit in exits_index)
     shortest_paths[df_DBN.columns[index_node]] = closer_exit
+    path = graph_DBN(predecessors, closer_exit[1])
+    print(predecessors, "\n")
     print(f"Shortest path from {node_name} to {closer_exit[1]} is {closer_exit[0]} units.", end="")
     print(" path : ", end="")
     graph_DBN.print_path(predecessors, closer_exit[1])
     print("\n")
+
+print(shortest_paths)
 
